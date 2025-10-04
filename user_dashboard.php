@@ -2,7 +2,7 @@
 session_start();
 
 // Check if user is logged in
-if (!isset($_SESSION['username']) || !isset($_SESSION['role'])) {
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['role'])) {
     header('Location: login.php');
     exit();
 }
@@ -13,7 +13,7 @@ if ($_SESSION['role'] !== 'User') {
     exit();
 }
 
-$username = $_SESSION['username'];
+$username = $_SESSION['name'] ?? $_SESSION['username'];
 ?>
 
 <!DOCTYPE html>
