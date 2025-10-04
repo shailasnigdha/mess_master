@@ -29,9 +29,9 @@ $username = $_SESSION['name'] ?? $_SESSION['username'];
         <div class="nav-container">
             <h2 class="nav-title">Mess Master</h2>
             <ul class="nav-links">
-                <li><a href="#profile">Profile</a></li>
+                <li><a href="user_dashboard.php">Dashboard</a></li>
+                <li><a href="user_meals.php">My Meals</a></li>
                 <li><a href="#dues">Dues</a></li>
-                <li><a href="#meals">Meals</a></li>
                 <li><a href="#notices">Notices</a></li>
                 <li><a href="logout.php" class="logout-link">Logout</a></li>
             </ul>
@@ -55,8 +55,8 @@ $username = $_SESSION['name'] ?? $_SESSION['username'];
             <div class="dashboard-card">
                 <div class="card-icon">🍽️</div>
                 <h3>My Meals</h3>
-                <p>Coming Soon - Under Development</p>
-                <button class="view-details-btn" onclick="alert('Meals section is under development by another team member')">Coming Soon</button>
+                <p>View meal calendar, toggle meals ON/OFF, and manage dining preferences</p>
+                <a href="user_meals.php" class="view-details-btn">Manage Meals</a>
             </div>
 
             <div class="dashboard-card">

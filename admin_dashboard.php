@@ -31,6 +31,7 @@ $adminName = $_SESSION['name'] ?? $_SESSION['username'];
                 <li><a href="admin_dashboard.php">Dashboard</a></li>
                 <li><a href="admin_manage_users.php">Manage Users</a></li>
                 <li><a href="admin_notices.php">Notices</a></li>
+                <li><a href="admin_meals.php">Meals</a></li>
                 <li><a href="admin_profile.php">Profile</a></li>
                 <li><a href="logout.php" class="logout-link">Logout</a></li>
             </ul>
@@ -70,6 +71,13 @@ $adminName = $_SESSION['name'] ?? $_SESSION['username'];
                 <h3>Notices</h3>
                 <p>Manage system announcements and important notices</p>
                 <a href="admin_notices.php" class="view-details-btn">Manage Notices</a>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-icon">🍽️</div>
+                <h3>Meal Management</h3>
+                <p>Plan weekly meals, set prices, and track user selections</p>
+                <a href="admin_meals.php" class="view-details-btn">Manage Meals</a>
             </div>
         </div>
 
