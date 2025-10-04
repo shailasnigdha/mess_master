@@ -1,8 +1,9 @@
 <?php
 session_start();
+require_once 'config.php';
 
 // If user is already logged in, redirect to appropriate dashboard
-if (isset($_SESSION['username']) && isset($_SESSION['role'])) {
+if (isset($_SESSION['user_id']) && isset($_SESSION['role'])) {
     if ($_SESSION['role'] === 'Admin') {
         header('Location: admin_dashboard.php');
     } else {
@@ -20,26 +21,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if all fields are filled
     if (empty($username) || empty($password) || empty($role)) {
         $error = "Please fill in all fields";
-    } elseif ($role === 'User' && $username !== 'user') {
-        $error = "Invalid username for User role. Username must be 'user'";
-    } elseif ($role === 'User' && $password !== 'user123') {
-        $error = "Invalid password for User";
-    } elseif ($role === 'Admin' && $username !== 'admin') {
-        $error = "Invalid username for Admin role. Username must be 'admin'";
-    } elseif ($role === 'Admin' && $password !== 'admin123') {
-        $error = "Invalid password for Admin";
     } else {
-        // Store role as username for display
-        $_SESSION['username'] = $role;
-        $_SESSION['role'] = $role;
-        
-        // Redirect based on role
         if ($role === 'Admin') {
-            header('Location: admin_dashboard.php');
+            // Check admin credentials
+            $stmt = $conn->prepare("SELECT id, username, password_hash, name FROM admins WHERE username = ?");
+            $stmt->bind_param("s", $username);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            if ($result->num_rows === 1) {
+                $admin = $result->fetch_assoc();
+                // For now, using plain text password. In production, use password_verify()
+                if ($password === $admin['password_hash']) {
+                    $_SESSION['user_id'] = $admin['id'];
+                    $_SESSION['username'] = $admin['username'];
+                    $_SESSION['name'] = $admin['name'];
+                    $_SESSION['role'] = 'Admin';
+                    header('Location: admin_dashboard.php');
+                    exit();
+                } else {
+                    $error = "Invalid admin password";
+                }
+            } else {
+                $error = "Admin not found";
+            }
+            $stmt->close();
+        } elseif ($role === 'User') {
+            // Check user credentials
+            $stmt = $conn->prepare("SELECT id, username, password_hash, name FROM users WHERE username = ?");
+            $stmt->bind_param("s", $username);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            if ($result->num_rows === 1) {
+                $user = $result->fetch_assoc();
+                // For now, using plain text password. In production, use password_verify()
+                if ($password === $user['password_hash']) {
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['username'] = $user['username'];
+                    $_SESSION['name'] = $user['name'];
+                    $_SESSION['role'] = 'User';
+                    header('Location: user_dashboard.php');
+                    exit();
+                } else {
+                    $error = "Invalid user password";
+                }
+            } else {
+                $error = "User not found. Please contact admin to create your account.";
+            }
+            $stmt->close();
         } else {
-            header('Location: user_dashboard.php');
+            $error = "Invalid role selected";
         }
-        exit();
     }
 }
 ?>
