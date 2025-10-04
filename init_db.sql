@@ -51,8 +51,55 @@ CREATE TABLE dues (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- Meal Plans Table (Admin sets meals by type and date)
+CREATE TABLE meal_plans (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    meal_date DATE NOT NULL,
+    meal_type ENUM('BREAKFAST','LUNCH','DINNER') NOT NULL,
+    meal_name VARCHAR(200) NOT NULL,
+    meal_description TEXT,
+    meal_price DECIMAL(10,2) NOT NULL,
+    is_vacation_day BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_meal_date_type (meal_date, meal_type)
+);
+
+-- User Meal Selections Table (User toggles individual meals)
+CREATE TABLE user_meal_selections (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    meal_plan_id INT NOT NULL,
+    meal_date DATE NOT NULL,
+    meal_type ENUM('BREAKFAST','LUNCH','DINNER') NOT NULL,
+    status ENUM('ON','OFF') DEFAULT 'OFF',
+    payment_status ENUM('PAID','DUE') DEFAULT 'DUE',
+    payment_date TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (meal_plan_id) REFERENCES meal_plans(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_user_meal_date_type (user_id, meal_date, meal_type)
+);
+
+-- Monthly Meal Summary Table (Tracks individual meal types)
+CREATE TABLE monthly_meal_summary (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    month INT NOT NULL,
+    year INT NOT NULL,
+    total_breakfast_opted INT DEFAULT 0,
+    total_lunch_opted INT DEFAULT 0,
+    total_dinner_opted INT DEFAULT 0,
+    total_amount_due DECIMAL(10,2) DEFAULT 0,
+    total_amount_paid DECIMAL(10,2) DEFAULT 0,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_user_month_year (user_id, month, year)
+);
+
 -- Default Admin (Change password after first login)
 INSERT INTO admins (username, password_hash, name, email)
 VALUES ('admin', 'admin123', 'System Administrator', 'admin@messmaster.com')
 ON DUPLICATE KEY UPDATE 
 username = VALUES(username);
+
