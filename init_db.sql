@@ -51,6 +51,8 @@ CREATE TABLE dues (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Default Admin
+-- Default Admin (Change password after first login)
 INSERT INTO admins (username, password_hash, name, email)
-VALUES ('admin', 'admin123', 'System Admin', 'admin@messmaster.com');
+VALUES ('admin', 'admin123', 'System Administrator', 'admin@messmaster.com')
+ON DUPLICATE KEY UPDATE 
+username = VALUES(username);
