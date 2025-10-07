@@ -32,7 +32,7 @@ $username = $_SESSION['name'] ?? $_SESSION['username'];
                 <li><a href="user_dashboard.php">Dashboard</a></li>
                 <li><a href="user_meals.php">My Meals</a></li>
                 <li><a href="#dues">Dues</a></li>
-                <li><a href="#notices">Notices</a></li>
+                <li><a href="user_notices.php">Notices</a></li>
                 <li><a href="logout.php" class="logout-link">Logout</a></li>
             </ul>
         </div>
@@ -59,12 +59,12 @@ $username = $_SESSION['name'] ?? $_SESSION['username'];
                 <a href="user_meals.php" class="view-details-btn">Manage Meals</a>
             </div>
 
-            <div class="dashboard-card">
-                <div class="card-icon">📢</div>
-                <h3>My Notices/Events</h3>
-                <p>Stay updated with latest announcements and events</p>
-                <button class="view-details-btn" onclick="viewNotices()">View Details</button>
-            </div>
+                <div class="dashboard-card">
+                    <div class="card-icon">📢</div>
+                    <h3>My Notices/Events</h3>
+                    <p>Stay updated with latest announcements and events</p>
+                    <a href="user_notices.php" class="view-details-btn">Browse Notices</a>
+                </div>
         </div>
 
         <!-- Dues Details Section (Hidden by default) -->
@@ -107,20 +107,11 @@ $username = $_SESSION['name'] ?? $_SESSION['username'];
         <div id="noticesSection" class="details-section" style="display: none;">
             <h2>Notices & Events</h2>
             <div class="details-content">
-                <div class="notice-item">
-                    <div class="notice-title">🎉 Holi Celebration</div>
-                    <div class="notice-date">March 14, 2025</div>
-                    <div class="notice-content">Join us for Holi celebration in the mess premises. Special menu will be served.</div>
-                </div>
-                <div class="notice-item">
-                    <div class="notice-title">📋 Monthly Menu Update</div>
-                    <div class="notice-date">March 1, 2025</div>
-                    <div class="notice-content">New menu for March has been updated. Check the notice board for details.</div>
-                </div>
-                <div class="notice-item">
-                    <div class="notice-title">⚠️ Timing Change</div>
-                    <div class="notice-date">February 28, 2025</div>
-                    <div class="notice-content">Dinner timing has been changed to 7:00 PM - 9:00 PM from March 1st.</div>
+                <div class="construction-message" style="text-align: center; padding: 40px;">
+                    <div class="construction-icon">�</div>
+                    <h3>View Latest Notices</h3>
+                    <p>Browse all hall announcements, events, and updates on the dedicated notices page.</p>
+                    <a href="user_notices.php" class="view-details-btn" style="display: inline-block; margin-top: 15px;">Open Notices Page</a>
                 </div>
             </div>
             <button class="close-btn" onclick="closeDetails()">Close</button>
@@ -140,28 +131,30 @@ $username = $_SESSION['name'] ?? $_SESSION['username'];
             document.getElementById('mealsSection').scrollIntoView({ behavior: 'smooth' });
         }
 
-        function viewNotices() {
-            hideAllSections();
-            document.getElementById('noticesSection').style.display = 'block';
-            document.getElementById('noticesSection').scrollIntoView({ behavior: 'smooth' });
-        }
-
         function closeDetails() {
             hideAllSections();
         }
 
         function hideAllSections() {
-            document.getElementById('duesSection').style.display = 'none';
-            document.getElementById('mealsSection').style.display = 'none';
-            document.getElementById('noticesSection').style.display = 'none';
+            ['duesSection', 'mealsSection', 'noticesSection'].forEach(id => {
+                const section = document.getElementById(id);
+                if (section) {
+                    section.style.display = 'none';
+                }
+            });
         }
 
         // Navigation link functionality
         document.querySelectorAll('.nav-links a:not(.logout-link)').forEach(link => {
+            const target = link.getAttribute('href');
+            if (!target || !target.startsWith('#')) {
+                return;
+            }
+
             link.addEventListener('click', function(e) {
                 e.preventDefault();
-                const section = this.getAttribute('href').substring(1);
-                
+                const section = target.substring(1);
+
                 switch(section) {
                     case 'dues':
                         viewDues();
@@ -170,7 +163,12 @@ $username = $_SESSION['name'] ?? $_SESSION['username'];
                         alert('Meals section is under development by another team member');
                         break;
                     case 'notices':
-                        viewNotices();
+                        hideAllSections();
+                        const notices = document.getElementById('noticesSection');
+                        if (notices) {
+                            notices.style.display = 'block';
+                            notices.scrollIntoView({ behavior: 'smooth' });
+                        }
                         break;
                     case 'profile':
                         alert('Profile section - Coming Soon!');
