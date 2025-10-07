@@ -445,6 +445,187 @@ body {
     text-align: left;
 }
 
+/* User Notices Page Styles */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #101631;
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 25px;
+    transition: transform 0.2s ease;
+}
+
+.back-link:hover {
+    transform: translateX(-4px);
+}
+
+.notice-board-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+}
+
+.notice-board-header {
+    color: white;
+    margin-bottom: 35px;
+}
+
+.notice-board-header h1 {
+    font-size: 2.4rem;
+    margin-bottom: 12px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.notice-board-header p {
+    font-size: 1.05rem;
+    opacity: 0.9;
+}
+
+.notice-stream {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.notice-board-container .notice-card {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 16px;
+    box-shadow: 0 20px 35px rgba(102, 126, 234, 0.15);
+    padding: 28px;
+    border: 1px solid rgba(102, 126, 234, 0.1);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.notice-board-container .notice-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 25px 45px rgba(102, 126, 234, 0.18);
+}
+
+.notice-board-container .notice-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 14px;
+}
+
+.notice-board-container .notice-card-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #2d2c3c;
+    margin: 0;
+}
+
+.notice-board-container .notice-card-date {
+    font-size: 0.85rem;
+    color: #6f6c8f;
+    flex-shrink: 0;
+    background: rgba(102, 126, 234, 0.1);
+    padding: 6px 12px;
+    border-radius: 20px;
+}
+
+.notice-board-container .notice-card-summary {
+    color: #4a4a62;
+    line-height: 1.6;
+    margin-bottom: 18px;
+}
+
+.notice-board-container .notice-card-summary.empty {
+    font-style: italic;
+    color: #85839c;
+}
+
+.notice-board-container .notice-card-full {
+    display: none;
+    padding: 18px;
+    border-radius: 12px;
+    background: #f7f7ff;
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    color: #3f3d56;
+    line-height: 1.65;
+    margin-bottom: 20px;
+}
+
+.notice-board-container .notice-card-full p {
+    margin-bottom: 12px;
+}
+
+.notice-board-container .notice-card-full p:last-child {
+    margin-bottom: 0;
+}
+
+.notice-board-container .notice-card[data-expanded="true"] .notice-card-full {
+    display: block;
+    animation: noticeFadeIn 0.25s ease;
+}
+
+.notice-board-container .notice-card-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.notice-board-container .notice-card-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.notice-board-container .notice-card-toggle:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.35);
+}
+
+.notice-board-container .notice-card-toggle .icon {
+    font-size: 1rem;
+    transition: transform 0.2s ease;
+}
+
+.notice-board-container .notice-card[data-expanded="true"] .notice-card-toggle .icon {
+    transform: rotate(180deg);
+}
+
+.empty-state {
+    background: rgba(255, 255, 255, 0.97);
+    border-radius: 16px;
+    padding: 50px 30px;
+    text-align: center;
+    color: #5f5d7a;
+    box-shadow: 0 15px 30px rgba(102, 126, 234, 0.15);
+    border: 1px dashed rgba(102, 126, 234, 0.35);
+}
+
+.empty-state h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    margin-bottom: 15px;
+}
+
+@keyframes noticeFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .nav-container {
@@ -481,6 +662,19 @@ body {
     
     .login-form {
         padding: 30px 20px;
+    }
+
+    .notice-board-container .notice-card {
+        padding: 22px;
+    }
+
+    .notice-board-container .notice-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .notice-board-container .notice-card-date {
+        margin-top: 6px;
     }
 }
 

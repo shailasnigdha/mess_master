@@ -103,3 +103,30 @@ VALUES ('admin', 'admin123', 'System Administrator', 'admin@messmaster.com')
 ON DUPLICATE KEY UPDATE 
 username = VALUES(username);
 
+-- Seed Notices (latest first)
+INSERT INTO notices (title, description, created_at) VALUES
+('Mess Hall Maintenance & Menu Update', 'Dear residents,
+
+Kindly note that the mess hall will undergo routine maintenance on Friday, 10 October 2025, from 2:00 PM to 5:00 PM. During this time the dining area will remain closed for cleaning and equipment checks.
+
+To ensure everyone is still served, snacks and beverages will be available at the common room kiosk.
+
+Also, the weekend menu has been refreshed! Visit the notice board or your Mess Master dashboard to see the new dishes planned for Saturday and Sunday.
+
+Thank you for your cooperation.
+— Mess Administration', '2025-10-08 09:00:00'),
+('Cultural Evening & Open Mic Night', 'Hello everyone,
+
+We''re excited to host a Cultural Evening and Open Mic Night on Saturday, 18 October 2025, starting at 7:30 PM in the mess courtyard. Solo performers and group acts are equally welcome!
+
+If you''d like to perform, please submit your entry to the cultural committee by Wednesday, 15 October. A short rehearsal session is scheduled for Friday evening.
+
+Family-friendly refreshments will be served. Bring your friends and let''s make it a memorable night.', '2025-10-07 18:30:00'),
+('October Mess Dues Reminder', 'Dear boarders,
+
+This is a reminder that October mess dues are payable by Thursday, 31 October 2025. Please clear your dues at the accounts desk between 10:00 AM and 2:00 PM on weekdays.
+
+Late payments after 31 October will incur a late fee of ₹150. If you have already paid, kindly ignore this message.
+
+For any billing discrepancies, contact the mess accounts office or email accounts@messmaster.com.', '2025-10-05 11:15:00');
+
