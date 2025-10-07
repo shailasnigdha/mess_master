@@ -71,6 +71,7 @@ if ($result === false) {
             <ul class="nav-links">
                 <li><a href="user_dashboard.php">Dashboard</a></li>
                 <li><a href="user_meals.php">My Meals</a></li>
+                <li><a href="user_dues.php">Dues</a></li>
                 <li><a href="user_notices.php">Notices</a></li>
                 <li><a href="logout.php" class="logout-link">Logout</a></li>
             </ul>

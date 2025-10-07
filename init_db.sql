@@ -51,6 +51,18 @@ CREATE TABLE dues (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- Optional payments table to track payment history (if used by admin)
+CREATE TABLE IF NOT EXISTS payments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    paid_on DATE NOT NULL,
+    reference VARCHAR(100) NULL,
+    notes VARCHAR(255) NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 -- Meal Plans Table (Admin sets meals by type and date)
 CREATE TABLE meal_plans (
     id INT AUTO_INCREMENT PRIMARY KEY,
