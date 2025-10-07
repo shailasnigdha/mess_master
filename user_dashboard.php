@@ -31,7 +31,7 @@ $username = $_SESSION['name'] ?? $_SESSION['username'];
             <ul class="nav-links">
                 <li><a href="user_dashboard.php">Dashboard</a></li>
                 <li><a href="user_meals.php">My Meals</a></li>
-                <li><a href="#dues">Dues</a></li>
+                <li><a href="user_dues.php">Dues</a></li>
                 <li><a href="user_notices.php">Notices</a></li>
                 <li><a href="logout.php" class="logout-link">Logout</a></li>
             </ul>
@@ -49,7 +49,7 @@ $username = $_SESSION['name'] ?? $_SESSION['username'];
                 <div class="card-icon">💰</div>
                 <h3>My Dues</h3>
                 <p>Check your pending payments and dues history</p>
-                <button class="view-details-btn" onclick="viewDues()">View Details</button>
+                <a href="user_dues.php" class="view-details-btn">View Dues</a>
             </div>
 
             <div class="dashboard-card">
@@ -71,20 +71,11 @@ $username = $_SESSION['name'] ?? $_SESSION['username'];
         <div id="duesSection" class="details-section" style="display: none;">
             <h2>My Dues</h2>
             <div class="details-content">
-                <div class="dues-item">
-                    <span class="dues-month">January 2025</span>
-                    <span class="dues-amount paid">₹2,500 - Paid</span>
-                </div>
-                <div class="dues-item">
-                    <span class="dues-month">February 2025</span>
-                    <span class="dues-amount paid">₹2,500 - Paid</span>
-                </div>
-                <div class="dues-item">
-                    <span class="dues-month">March 2025</span>
-                    <span class="dues-amount pending">₹2,500 - Pending</span>
-                </div>
-                <div class="total-dues">
-                    <strong>Total Pending: ₹2,500</strong>
+                <div class="construction-message" style="text-align: center; padding: 40px;">
+                    <div class="construction-icon">💰</div>
+                    <h3>View Your Dues</h3>
+                    <p>Open the dedicated dues page to see your latest fee details and payment history.</p>
+                    <a href="user_dues.php" class="view-details-btn" style="display: inline-block; margin-top: 15px;">Open Dues Page</a>
                 </div>
             </div>
             <button class="close-btn" onclick="closeDetails()">Close</button>
@@ -121,8 +112,11 @@ $username = $_SESSION['name'] ?? $_SESSION['username'];
     <script>
         function viewDues() {
             hideAllSections();
-            document.getElementById('duesSection').style.display = 'block';
-            document.getElementById('duesSection').scrollIntoView({ behavior: 'smooth' });
+            const dues = document.getElementById('duesSection');
+            if (dues) {
+                dues.style.display = 'block';
+                dues.scrollIntoView({ behavior: 'smooth' });
+            }
         }
 
         function viewMeals() {
