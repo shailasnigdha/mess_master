@@ -138,7 +138,7 @@ Family-friendly refreshments will be served. Bring your friends and let''s make 
 
 This is a reminder that October mess dues are payable by Thursday, 31 October 2025. Please clear your dues at the accounts desk between 10:00 AM and 2:00 PM on weekdays.
 
-Late payments after 31 October will incur a late fee of ₹150. If you have already paid, kindly ignore this message.
+Late payments after 31 October will incur a late fee of Tk 150. If you have already paid, kindly ignore this message.
 
 For any billing discrepancies, contact the mess accounts office or email accounts@messmaster.com.', '2025-10-05 11:15:00');
 
