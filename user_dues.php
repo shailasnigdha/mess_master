@@ -40,6 +40,14 @@ $duesRes = $duesStmt->get_result();
 $dues = $duesRes->fetch_all(MYSQLI_ASSOC);
 $duesStmt->close();
 
+// Fetch monthly meal summary for detailed month-wise breakdown
+$monthlyMealStmt = $conn->prepare("SELECT month, year, total_breakfast_opted, total_lunch_opted, total_dinner_opted, total_amount_due, total_amount_paid FROM monthly_meal_summary WHERE user_id = ? ORDER BY year DESC, month DESC LIMIT 12");
+$monthlyMealStmt->bind_param('i', $userId);
+$monthlyMealStmt->execute();
+$monthlyMealRes = $monthlyMealStmt->get_result();
+$monthlyMealData = $monthlyMealRes->fetch_all(MYSQLI_ASSOC);
+$monthlyMealStmt->close();
+
 // Optional payment history: read if payments table exists
 $paymentHistory = [];
 $paymentsTableExists = false;
@@ -55,7 +63,7 @@ if ($checkRes && $checkRes->num_rows > 0) {
 
 function formatMoney($v) {
     if ($v === null || $v === '') return '';
-    return '₹' . number_format((float)$v, 2);
+    return 'Tk ' . number_format((float)$v, 2);
 }
 
 function formatDateNice($dateStr) {
@@ -179,6 +187,63 @@ function formatDateNice($dateStr) {
                         </tbody>
                     </table>
                 <?php endif; ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if (!empty($monthlyMealData)): ?>
+            <div class="dues-card">
+                <h2>🍽️ Monthly Meal Summary</h2>
+                <table class="dues-table" aria-label="Monthly meal breakdown">
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Breakfast</th>
+                            <th>Lunch</th>
+                            <th>Dinner</th>
+                            <th>Total Due</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($monthlyMealData as $monthData): ?>
+                            <?php
+                                $monthName = date('F Y', mktime(0, 0, 0, $monthData['month'], 1, $monthData['year']));
+                                $isPaid = ($monthData['total_amount_paid'] >= $monthData['total_amount_due'] && $monthData['total_amount_due'] > 0);
+                            ?>
+                            <tr>
+                                <td><strong><?php echo htmlspecialchars($monthName); ?></strong></td>
+                                <td style="text-align: center;">
+                                    <span style="background: #ffeaa7; padding: 2px 6px; border-radius: 10px; font-size: 0.8rem;">
+                                        🌅 <?php echo $monthData['total_breakfast_opted']; ?>
+                                    </span>
+                                </td>
+                                <td style="text-align: center;">
+                                    <span style="background: #fab1a0; padding: 2px 6px; border-radius: 10px; font-size: 0.8rem;">
+                                        ☀️ <?php echo $monthData['total_lunch_opted']; ?>
+                                    </span>
+                                </td>
+                                <td style="text-align: center;">
+                                    <span style="background: #a29bfe; padding: 2px 6px; border-radius: 10px; font-size: 0.8rem; color: white;">
+                                        🌙 <?php echo $monthData['total_dinner_opted']; ?>
+                                    </span>
+                                </td>
+                                <td><?php echo htmlspecialchars(formatMoney($monthData['total_amount_due'])); ?></td>
+                                <td>
+                                    <span class="dues-status <?php echo $isPaid ? 'Paid' : 'Pending'; ?>" style="padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; <?php echo $isPaid ? 'background: #d4edda; color: #155724;' : 'background: #fff3cd; color: #856404;'; ?>">
+                                        <?php echo $isPaid ? '✅ Paid' : '⏳ Pending'; ?>
+                                    </span>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+                <div style="margin-top: 15px; padding: 12px; background: #f1f2f6; border-radius: 8px; font-size: 0.9rem; color: #2f3542;">
+                    <strong>💡 Understanding Your Meal Dues:</strong><br>
+                    • <strong>Total Due:</strong> Amount for all meals you selected this month<br>
+                    • <strong>Status:</strong> Shows if the month has been marked as paid by admin<br>
+                    • <strong>✅ Paid:</strong> Admin has confirmed payment for this month<br>
+                    • <strong>⏳ Pending:</strong> Payment not yet confirmed by admin
+                </div>
             </div>
         <?php endif; ?>
     </div>
