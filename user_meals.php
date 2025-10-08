@@ -35,7 +35,7 @@ if (isset($_POST['toggle_meal'])) {
         $stmt->bind_param("iissss", $user_id, $meal_plan_id, $meal_date, $meal_type, $new_status, $payment_choice);
         
         if ($stmt->execute()) {
-            $success = ucfirst(strtolower($meal_type)) . " preference updated successfully!";
+            $success = ucfirst(strtolower($meal_type)) . " meal updated successfully!";
             
             // Update monthly summary
             $month = date('n', strtotime($meal_date));
@@ -65,11 +65,11 @@ if (isset($_POST['toggle_meal'])) {
             $update_summary->execute();
             
         } else {
-            $error = "Error updating meal preference. Please try again.";
+            $error = "Error updating meal. Please try again.";
         }
         $stmt->close();
     } else {
-        $error = "Cannot change meal preference. You can only modify meals that are more than 1 day away.";
+        $error = "Cannot change meal. You can only modify meals that are more than 1 day away.";
     }
 }
 
@@ -347,7 +347,7 @@ if (!$monthly_summary) {
         <?php endif; ?>
 
         <div class="restriction-note">
-            <strong>📋 Important:</strong> You can only change your meal preferences for meals that are more than 1 day away. 
+            <strong>📋 Important:</strong> You can only change your meals for meals that are more than 1 day away. 
             Vacation days are set by admin and cannot be modified.
         </div>
 
@@ -367,15 +367,15 @@ if (!$monthly_summary) {
                     <p>🌙 Dinner</p>
                 </div>
                 <div class="summary-card">
-                    <h3>₹<?php echo number_format($monthly_summary['total_amount_paid'], 2); ?></h3>
+                    <h3>Tk <?php echo number_format($monthly_summary['total_amount_paid'], 2); ?></h3>
                     <p>💳 Amount Paid</p>
                 </div>
                 <div class="summary-card">
-                    <h3>₹<?php echo number_format($monthly_summary['total_amount_due'], 2); ?></h3>
+                    <h3>Tk <?php echo number_format($monthly_summary['total_amount_due'], 2); ?></h3>
                     <p>💰 Amount Due</p>
                 </div>
                 <div class="summary-card">
-                    <h3>₹<?php echo number_format($monthly_summary['total_amount_due'] + $monthly_summary['total_amount_paid'], 2); ?></h3>
+                    <h3>Tk <?php echo number_format($monthly_summary['total_amount_due'] + $monthly_summary['total_amount_paid'], 2); ?></h3>
                     <p>💸 Total Amount</p>
                 </div>
             </div>
@@ -415,7 +415,7 @@ if (!$monthly_summary) {
                                                 <?php echo ucfirst(strtolower($meal['meal_type'])); ?>
                                             </div>
                                             <div style="font-weight: bold; color: #667eea;">
-                                                ₹<?php echo number_format($meal['meal_price'], 2); ?>
+                                                Tk <?php echo number_format($meal['meal_price'], 2); ?>
                                             </div>
                                         </div>
                                         
@@ -428,8 +428,8 @@ if (!$monthly_summary) {
                                             <?php 
                                             if ($availability === 'VACATION') echo '🏖️ Vacation';
                                             elseif ($availability === 'PAST') echo '⏰ Past';
-                                            elseif ($is_opted_in) echo '✅ Opted IN';
-                                            else echo '❌ Opted OFF';
+                                            elseif ($is_opted_in) echo '✅ Turned ON';
+                                            else echo '❌ Turned OFF';
                                             ?>
                                         </div>
                                     </div>
@@ -467,12 +467,12 @@ if (!$monthly_summary) {
                                                     </select>
                                                     <input type="hidden" name="new_status" value="ON">
                                                     <button type="submit" name="toggle_meal" class="toggle-btn opt-in" style="font-size: 0.8rem; padding: 4px 12px;">
-                                                        ✅ Opt IN
+                                                        ✅ Turn ON
                                                     </button>
                                                 <?php else: ?>
                                                     <input type="hidden" name="new_status" value="OFF">
                                                     <button type="submit" name="toggle_meal" class="toggle-btn opt-out" style="font-size: 0.8rem; padding: 4px 12px;">
-                                                        ❌ Opt OUT
+                                                        ❌ Turn OFF
                                                     </button>
                                                 <?php endif; ?>
                                             </form>
