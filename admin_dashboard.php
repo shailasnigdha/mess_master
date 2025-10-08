@@ -32,7 +32,6 @@ $adminName = $_SESSION['name'] ?? $_SESSION['username'];
                 <li><a href="admin_manage_users.php">Manage Users</a></li>
                 <li><a href="admin_notices.php">Notices</a></li>
                 <li><a href="admin_meals.php">Meals</a></li>
-                <li><a href="admin_profile.php">Profile</a></li>
                 <li><a href="logout.php" class="logout-link">Logout</a></li>
             </ul>
         </div>
