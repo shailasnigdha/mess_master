@@ -17,15 +17,47 @@ if (isset($_POST['add_meal'])) {
     $is_vacation = isset($_POST['is_vacation']) ? 1 : 0;
     
     if (!empty($meal_date) && !empty($meal_type) && !empty($meal_name) && $meal_price > 0) {
-        $stmt = $conn->prepare("INSERT INTO meal_plans (meal_date, meal_type, meal_name, meal_description, meal_price, is_vacation_day) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE meal_name = VALUES(meal_name), meal_description = VALUES(meal_description), meal_price = VALUES(meal_price), is_vacation_day = VALUES(is_vacation_day)");
-        $stmt->bind_param("ssssdi", $meal_date, $meal_type, $meal_name, $meal_description, $meal_price, $is_vacation);
+        // Check if there's already a vacation day on this date
+        $vacation_check = $conn->prepare("SELECT id FROM meal_plans WHERE meal_date = ? AND is_vacation_day = 1 LIMIT 1");
+        $vacation_check->bind_param("s", $meal_date);
+        $vacation_check->execute();
+        $vacation_result = $vacation_check->get_result();
         
-        if ($stmt->execute()) {
-            $success = "$meal_type meal for " . date('F j, Y', strtotime($meal_date)) . " has been saved successfully!";
+        if ($vacation_result->num_rows > 0 && !$is_vacation) {
+            // There's already a vacation day on this date and user is trying to add a regular meal
+            $error = "Cannot add meals on vacation days. " . date('F j, Y', strtotime($meal_date)) . " is marked as a vacation day.";
+            $vacation_check->close();
         } else {
-            $error = "Error saving meal plan. Please try again.";
+            $vacation_check->close();
+            
+            // If marking as vacation, prevent adding regular meals for same date
+            if ($is_vacation) {
+                // Remove any existing regular meals for this date
+                $cleanup_stmt = $conn->prepare("DELETE FROM meal_plans WHERE meal_date = ? AND is_vacation_day = 0");
+                $cleanup_stmt->bind_param("s", $meal_date);
+                $cleanup_stmt->execute();
+                $cleanup_stmt->close();
+                
+                // Add vacation day entry (only one vacation entry per date)
+                $stmt = $conn->prepare("INSERT INTO meal_plans (meal_date, meal_type, meal_name, meal_description, meal_price, is_vacation_day) VALUES (?, 'VACATION', 'Vacation Day', 'No meals available - Vacation day', 0, 1) ON DUPLICATE KEY UPDATE meal_name = 'Vacation Day', meal_description = 'No meals available - Vacation day', meal_price = 0, is_vacation_day = 1");
+                $stmt->bind_param("s", $meal_date);
+            } else {
+                // Regular meal addition
+                $stmt = $conn->prepare("INSERT INTO meal_plans (meal_date, meal_type, meal_name, meal_description, meal_price, is_vacation_day) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE meal_name = VALUES(meal_name), meal_description = VALUES(meal_description), meal_price = VALUES(meal_price), is_vacation_day = VALUES(is_vacation_day)");
+                $stmt->bind_param("ssssdi", $meal_date, $meal_type, $meal_name, $meal_description, $meal_price, $is_vacation);
+            }
+            
+            if ($stmt->execute()) {
+                if ($is_vacation) {
+                    $success = date('F j, Y', strtotime($meal_date)) . " has been marked as vacation day. All meals for this date have been removed.";
+                } else {
+                    $success = "$meal_type meal for " . date('F j, Y', strtotime($meal_date)) . " has been saved successfully!";
+                }
+            } else {
+                $error = "Error saving meal plan. Please try again.";
+            }
+            $stmt->close();
         }
-        $stmt->close();
     } else {
         $error = "Please fill in all required fields with valid data.";
     }
@@ -222,7 +254,6 @@ $adminName = $_SESSION['name'] ?? $_SESSION['username'];
                 <li><a href="admin_manage_users.php">Manage Users</a></li>
                 <li><a href="admin_notices.php">Notices</a></li>
                 <li><a href="admin_meals.php">Meals</a></li>
-                <li><a href="admin_profile.php">Profile</a></li>
                 <li><a href="logout.php" class="logout-link">Logout</a></li>
             </ul>
         </div>
@@ -284,7 +315,7 @@ $adminName = $_SESSION['name'] ?? $_SESSION['username'];
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="meal_price">Meal Price (₹):</label>
+                        <label for="meal_price">Meal Price (Tk):</label>
                         <input type="number" id="meal_price" name="meal_price" step="0.50" min="1" placeholder="Enter price" required 
                                value="<?php echo htmlspecialchars($_POST['meal_price'] ?? ''); ?>">
                     </div>
@@ -305,7 +336,7 @@ $adminName = $_SESSION['name'] ?? $_SESSION['username'];
                 
                 <div class="checkbox-group">
                     <input type="checkbox" id="is_vacation" name="is_vacation" <?php echo (isset($_POST['is_vacation']) ? 'checked' : ''); ?>>
-                    <label for="is_vacation">🏖️ Mark as Vacation Day (Users cannot opt for meals)</label>
+                    <label for="is_vacation">🏖️ Mark as Vacation Day (No meals available - removes any existing meals for this date)</label>
                 </div>
                 
                 <button type="submit" name="add_meal" class="login-btn" style="width: auto; padding: 12px 30px; margin-top: 20px;">
@@ -336,11 +367,11 @@ $adminName = $_SESSION['name'] ?? $_SESSION['username'];
                         </div>
                         <?php endif; ?>
                         <div class="meal-stats">
-                            <span class="stat-badge price-badge">₹<?= number_format($meal['meal_price'], 2) ?></span>
+                            <span class="stat-badge price-badge">Tk <?= number_format($meal['meal_price'], 2) ?></span>
                             <?php if ($meal['is_vacation_day']): ?>
                                 <span class="stat-badge vacation-badge">🏖️ Vacation Day</span>
                             <?php else: ?>
-                                <span class="stat-badge users-badge">👥 <?= $meal['users_opted_in'] ?> users opted in</span>
+                                <span class="stat-badge users-badge">👥 <?= $meal['users_opted_in'] ?> users turned on</span>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -412,6 +443,60 @@ $adminName = $_SESSION['name'] ?? $_SESSION['username'];
         
         document.getElementById('meal_date').addEventListener('change', updateMealName);
         document.getElementById('meal_type').addEventListener('change', updateMealName);
+        
+        // Handle vacation day checkbox
+        function toggleVacationFields() {
+            const vacationCheckbox = document.getElementById('is_vacation');
+            const mealTypeField = document.getElementById('meal_type');
+            const mealNameField = document.getElementById('meal_name');
+            const mealDescField = document.getElementById('meal_description');
+            const mealPriceField = document.getElementById('meal_price');
+            
+            if (vacationCheckbox.checked) {
+                // Disable meal fields when vacation is checked
+                mealTypeField.disabled = true;
+                mealNameField.disabled = true;
+                mealDescField.disabled = true;
+                mealPriceField.disabled = true;
+                
+                // Set vacation values
+                mealNameField.value = 'Vacation Day';
+                mealDescField.value = 'No meals available - Vacation day';
+                mealPriceField.value = '0';
+                
+                // Style disabled fields
+                [mealTypeField, mealNameField, mealDescField, mealPriceField].forEach(field => {
+                    field.style.backgroundColor = '#f5f5f5';
+                    field.style.color = '#999';
+                });
+            } else {
+                // Enable meal fields when vacation is unchecked
+                mealTypeField.disabled = false;
+                mealNameField.disabled = false;
+                mealDescField.disabled = false;
+                mealPriceField.disabled = false;
+                
+                // Clear vacation values
+                mealNameField.value = '';
+                mealDescField.value = '';
+                mealPriceField.value = '';
+                
+                // Reset field styles
+                [mealTypeField, mealNameField, mealDescField, mealPriceField].forEach(field => {
+                    field.style.backgroundColor = '';
+                    field.style.color = '';
+                });
+                
+                // Update meal name based on current selections
+                updateMealName();
+            }
+        }
+        
+        // Add event listener for vacation checkbox
+        document.getElementById('is_vacation').addEventListener('change', toggleVacationFields);
+        
+        // Initialize on page load
+        toggleVacationFields();
     </script>
 </body>
 </html>
