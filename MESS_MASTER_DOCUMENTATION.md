@@ -798,4 +798,3 @@ For additional support or feature requests, please refer to the GitHub repositor
 
 ---
 
-*© 2025 Shaila Snigdha - Mess Master System Documentation*
