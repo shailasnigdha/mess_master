@@ -109,8 +109,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="role">Role:</label>
                     <select id="role" name="role">
                         <option value="">Select Role</option>
-                        <option value="User" <?php echo (($_POST['role'] ?? '') === 'User') ? 'selected' : ''; ?>>User</option>
-                        <option value="Admin" <?php echo (($_POST['role'] ?? '') === 'Admin') ? 'selected' : ''; ?>>Admin</option>
+                        <option value="User" <?php echo (($_POST['role'] ?? 'User') === 'User') ? 'selected' : ''; ?>>User</option>
+                        <option value="Admin" <?php echo (($_POST['role'] ?? 'User') === 'Admin') ? 'selected' : ''; ?>>Admin</option>
                     </select>
                 </div>
                 
