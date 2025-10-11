@@ -2,13 +2,15 @@
 session_start();
 require 'config.php';
 
+$notLoggedIn = false;
 if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'User') {
-    header('Location: login.php');
-    exit();
+    // Instead of an immediate redirect, show a friendly message so users understand why the page
+    // didn't load (helps debugging / testing). The form remains protected for POSTs.
+    $notLoggedIn = true;
+} else {
+    $userId = (int) $_SESSION['user_id'];
+    $username = $_SESSION['name'] ?? $_SESSION['username'] ?? 'User';
 }
-
-$userId = (int) $_SESSION['user_id'];
-$username = $_SESSION['name'] ?? $_SESSION['username'] ?? 'User';
 
 $errors = [];
 $success = null;
@@ -85,6 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <li><a href="user_meals.php">My Meals</a></li>
                 <li><a href="user_dues.php">Dues</a></li>
                 <li><a href="user_notices.php">Notices</a></li>
+                <li><a href="user_feedback.php">Feedback</a></li>
                 <li><a href="user_profile.php">Profile</a></li>
                 <li><a href="logout.php" class="logout-link">Logout</a></li>
             </ul>

@@ -69,6 +69,7 @@ $username = $_SESSION['name'] ?? $_SESSION['username'] ?? $u['username'] ?? 'Use
                 <li><a href="user_meals.php">My Meals</a></li>
                 <li><a href="user_dues.php">Dues</a></li>
                 <li><a href="user_notices.php">Notices</a></li>
+                <li><a href="user_feedback.php">Feedback</a></li>
                 <li><a href="user_profile.php">Profile</a></li>
                 <li><a href="logout.php" class="logout-link">Logout</a></li>
             </ul>

@@ -128,6 +128,7 @@ $notices = $conn->query("SELECT * FROM notices ORDER BY created_at DESC");
                 <li><a href="admin_manage_users.php">Manage Users</a></li>
                 <li><a href="admin_notices.php">Notices</a></li>
                 <li><a href="admin_meals.php">Meals</a></li>
+                                <li><a href="admin_feedbacks.php" class="nav-link">Feedback Inbox</a></li>
                 <li><a href="logout.php" class="logout-link">Logout</a></li>
             </ul>
         </div>
