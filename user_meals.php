@@ -346,6 +346,8 @@ if (!$monthly_summary) {
             </div>
         <?php endif; ?>
 
+                                            <!-- Feedback button for this meal -->
+                                            <a href="user_feedback.php?meal_id=<?php echo $meal['id']; ?>" class="submit-btn" style="margin-left:8px; padding:6px 12px; font-size:0.9rem;">📝 Give feedback</a>
         <div class="restriction-note">
             <strong>📋 Important:</strong> You can only change your meals for meals that are more than 1 day away. 
             Vacation days are set by admin and cannot be modified.

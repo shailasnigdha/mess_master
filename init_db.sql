@@ -63,6 +63,20 @@ CREATE TABLE IF NOT EXISTS payments (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- Feedbacks table: stores user-submitted reviews/complaints for admin review
+CREATE TABLE IF NOT EXISTS feedbacks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    meal_id INT NULL,
+    type ENUM('Review','Complaint') NOT NULL,
+    subject VARCHAR(200) NOT NULL,
+    message TEXT NOT NULL,
+    status ENUM('Unread','Read') DEFAULT 'Unread',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (meal_id) REFERENCES meal_plans(id) ON DELETE SET NULL
+);
+
 -- Meal Plans Table (Admin sets meals by type and date)
 CREATE TABLE meal_plans (
     id INT AUTO_INCREMENT PRIMARY KEY,
